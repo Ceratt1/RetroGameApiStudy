@@ -45,8 +45,7 @@ app.post("/", (req, res) => {
         });
     };
 
-
-    console.log(getMessage);
+    console.log(req.body);
     
 
     saveMessageToFile();
