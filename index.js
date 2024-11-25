@@ -51,3 +51,48 @@ app.get("/:message", (req, res) => {
     // Chama a função para salvar
     saveMessageToFile();
 });
+
+
+app.get("/", (req, res) => {
+    // Lê o arquivo JSON com as mensagens
+    fs.readFile(jsonFilePath, "utf8", (err, data) => {
+        if (err) {
+            return res.status(500).send("Erro ao ler o arquivo.");
+        }
+
+        let messages = [];
+
+        try {
+            messages = JSON.parse(data);
+        } catch (parseError) {
+            return res.status(500).send("Erro ao processar os dados.");
+        }
+
+        // Adiciona hora e minuto à cada mensagem
+        const messagesWithTime = messages.map((msg) => {
+            const timestamp = new Date(msg.timestamp);
+            const hours = timestamp.getHours().toString().padStart(2, "0");
+            const minutes = timestamp.getMinutes().toString().padStart(2, "0");
+
+            return {
+                message: msg.message,
+                time: `${hours}:${minutes}`,
+            };
+        });
+
+        // Construa o HTML para mostrar as mensagens
+        let html = "<!DOCTYPE html><html><head><title>Mensagens</title></head><body>";
+        html += "<h1>Mensagens com Hora e Minuto</h1>";
+        html += "<ul>";
+
+        // Exibe todas as mensagens com hora e minuto
+        messagesWithTime.forEach((msg) => {
+            html += `<li>${msg.message} - ${msg.time}</li>`;
+        });
+
+        html += "</ul></body></html>";
+
+        // Envia o HTML para o cliente
+        res.send(html);
+    });
+});
