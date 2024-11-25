@@ -19,13 +19,12 @@ app.get("/", (req, res) => {
     res.send("hello!");
 });
 
-app.post("/", (req, res) => {
-    const getMessage = req.body.message;
+app.post("/:message", (req, res) => {
+    const getMessage = req.params.message;
     
     const newMessage = { message: getMessage, timestamp: new Date() };
 
     const saveMessageToFile = () => {
-        // Verificar se o arquivo já existe
         fs.readFile(jsonFilePath, "utf8", (err, data) => {
             let messages = [];
 
