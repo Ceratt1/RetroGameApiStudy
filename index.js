@@ -96,3 +96,13 @@ app.get("/", (req, res) => {
         res.send(html);
     });
 });
+
+app.get("/receber/messages", (req, res) => {
+    fs.readFile(jsonFilePath, "utf8", (err, data) => {
+        if (err) {
+            return res.status(500).send("Erro ao ler o arquivo.");
+        } else {
+            return res.send(data);
+        }
+    });
+});
