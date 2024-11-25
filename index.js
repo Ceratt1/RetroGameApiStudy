@@ -22,24 +22,19 @@ app.get("/", (req, res) => {
 app.post("/", (req, res) => {
     const getMessage = req.body.message;
     
-    // Criar o objeto para salvar
     const newMessage = { message: getMessage, timestamp: new Date() };
 
-    // Função para salvar a mensagem no arquivo JSON
     const saveMessageToFile = () => {
         // Verificar se o arquivo já existe
         fs.readFile(jsonFilePath, "utf8", (err, data) => {
             let messages = [];
 
-            // Se o arquivo já existe, adiciona a nova mensagem ao arquivo existente
             if (!err && data) {
                 messages = JSON.parse(data);
             }
 
-            // Adiciona a nova mensagem à lista
             messages.push(newMessage);
 
-            // Salva o novo conteúdo no arquivo JSON
             fs.writeFile(jsonFilePath, JSON.stringify(messages, null, 2), "utf8", (err) => {
                 if (err) {
                     console.error("Erro ao salvar mensagem:", err);
@@ -50,6 +45,9 @@ app.post("/", (req, res) => {
         });
     };
 
-    // Chama a função para salvar
+
+    console.log(getMessage);
+    
+
     saveMessageToFile();
 });
