@@ -17,13 +17,12 @@ const convertImageToMatrix = async (imagePath) => {
     return { data, width: info.width, height: info.height };
 };
 
-// Função para gerar a matriz como string HTML
-const generateHtmlMatrix = (data, width, height) => {
-    let html = "<!DOCTYPE html><html><head><title>Matriz</title><style>";
-    html += "body { font-family: monospace; line-height: 1; } .row { white-space: nowrap; }</style></head><body>";
+// Função para gerar a matriz como lista de strings
+const generateMatrix = (data, width, height) => {
+    const matrix = [];
 
     for (let y = 0; y < height; y++) {
-        html += '<div class="row">';
+        let row = "";
         for (let x = 0; x < width; x++) {
             // Cada pixel tem 3 valores RGB, simplificando para escala de cinza
             const offset = (y * width + x) * 3;
@@ -33,13 +32,12 @@ const generateHtmlMatrix = (data, width, height) => {
             const grayscale = (r + g + b) / 3;
 
             // Mapeando escala de cinza para caracteres
-            html += grayscale < 128 ? "#" : ".";
+            row += grayscale < 128 ? "#" : ".";
         }
-        html += "</div>";
+        matrix.push(row);
     }
 
-    html += "</body></html>";
-    return html;
+    return matrix;
 };
 
 // Criar aplicação Express
@@ -56,9 +54,11 @@ app.get("/", async (req, res) => {
         // Converter imagem
         const { data, width, height } = await convertImageToMatrix(imagePath);
 
-        // Gerar e enviar HTML da matriz
-        const htmlMatrix = generateHtmlMatrix(data, width, height);
-        res.status(200).send(htmlMatrix);
+        // Gerar matriz
+        const matrix = generateMatrix(data, width, height);
+
+        // Enviar matriz como JSON
+        res.status(200).json({ width, height, matrix });
     } catch (error) {
         console.error("Erro ao processar a imagem:", error);
         res.status(500).send("Erro ao processar a imagem.");
